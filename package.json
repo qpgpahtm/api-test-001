@@ -1,0 +1,33 @@
+{
+  "name": "apiai-test",
+  "version": "0.0.1",
+  "description": "Node.js SDK for api.ai",
+  "engines": {
+    "node": "5.9.1"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "apiai": "3.0.3",
+    "ejs": "2.4.1",
+    "express": "4.13.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qpgpahtm/api-test-001.git"
+  },
+  "keywords": [
+    "apiai",
+    "node",
+    "heroku",
+    "express"
+  ],
+  "author": "test",
+  "bugs": {
+    "url": "https://github.com/qpgpahtm/api-test-001/issues"
+  },
+  "homepage": "https://github.com/qpgpahtm/api-test-001",
+  "license": "ISC"
+}
