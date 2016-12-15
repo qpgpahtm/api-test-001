@@ -4,13 +4,13 @@
  * Apache 2.0 Licensed
  */
 
-var apiai = require("apiai");
+//var apiai = require("apiai");
 var express = require('express');
 var app = express();
 
 app.set('port', (process.env.PORT || 5000));
 
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/views'));
 
 // views is directory for all template files
 app.set('views', __dirname + '/views');
