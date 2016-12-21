@@ -47,7 +47,7 @@ function App() {
             queryJson = {
                 "v": SERVER_VERSION,
                 "query": query,
-                "timezone": "GMT+6",
+                "timezone": "GMT+9",
                 "lang": "en",
                 //"contexts" : ["weather", "local"],
                 "sessionId": sessionId
@@ -121,7 +121,7 @@ function App() {
             apiAi.sendJson({
                 "v": "20150512",
                 "query": "hello",
-                "timezone": "GMT+6",
+                "timezone": "GMT+9",
                 "lang": "en",
                 //"contexts" : ["weather", "local"],
                 "sessionId": sessionId
@@ -148,7 +148,18 @@ function App() {
                 //dialogue.innerHTML = JSON.stringify(status);
                 return;
             }
-
+			if(data.result.parameters.geocity){
+				console.log("data.result.parameter.geocity///"+data.result.parameters.geocity);
+				jQuery.ajax({
+					method:"get"
+					, url:"http://api.openweathermap.org/data/2.5/forecast"
+					, data:{APPID:"bc3eddcd4507e4f3892c94de0192536d", q:data.result.parameters.geocity, mode:"json"}
+				}).done(function(result){
+					console.log("@@@@@@");
+					console.log(result);
+					console.log("@@@@@@");
+				});
+			}
             speech = (data.result.fulfillment) ? data.result.fulfillment.speech : data.result.speech;
             // Use Text To Speech service to play text.
             apiAiTts.tts(speech, undefined, 'en-US');
