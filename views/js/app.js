@@ -148,17 +148,36 @@ function App() {
                 //dialogue.innerHTML = JSON.stringify(status);
                 return;
             }
+
+			var googleResult;
 			if(data.result.parameters.geocity){
 				console.log("data.result.parameter.geocity///"+data.result.parameters.geocity);
-				jQuery.ajax({
-					method:"get"
-					, url:"http://api.openweathermap.org/data/2.5/forecast"
-					, data:{APPID:"bc3eddcd4507e4f3892c94de0192536d", q:data.result.parameters.geocity, mode:"json"}
-				}).done(function(result){
-					console.log("@@@@@@");
-					console.log(result);
-					console.log("@@@@@@");
-				});
+				googleResult = _googleApiAjax(data);
+				if(undefined != googleResult.weather && googleResult.weather.length>0){
+					data.result.fulfillment.speech = data.result.fulfillment.speech.replace("$weather",googleResult.weather[0].description);
+				}
+				if(undefined != googleResult.list && googleResult.list.length>0){
+					var timeSplit = data.result.parameters.timeperiod.split("/");
+					var searchIdx = 0;
+					var arr = new Array();
+					var todayDt = new Date();
+					var todayStr = todayDt.getFullYear()+"-"+(todayDt.getMonth()+1)+"-"+todayDt.getDate();
+					for(var i = 0; i < googleResult.list.length; i++){
+						arr.push(googleResult.list[i].dt_txt);
+					}
+					if(timeSplit.length>1){
+						for(var j = 0; j < arr.length; j++){
+							if(todayStr == arr[j].substr(0,10)){
+								if( Number(timeSplit[0].substr(0,2)) < Number(arr[j].substr(11,2)) && Number(timeSplit[1].substr(0,2)) > Number(arr[j].substr(11,2)) ){
+									searchIdx = j;
+								}
+							}
+						}
+						if(undefined != googleResult.list[searchIdx].weather && googleResult.list[searchIdx].weather.length > 0){
+							data.result.fulfillment.speech = data.result.fulfillment.speech.replace("$weather",googleResult.list[searchIdx].weather[0].description);
+						}
+					}
+				}
 			}
             speech = (data.result.fulfillment) ? data.result.fulfillment.speech : data.result.speech;
             // Use Text To Speech service to play text.
@@ -204,6 +223,23 @@ function App() {
         apiAi.stopListening();
         isListening = false;
     }
+
+	function _googleApiAjax(data){
+		var googleResult;
+		var apiUrl = "http://api.openweathermap.org/data/2.5/weather";
+		if(undefined != data.result.parameters.timeperiod){
+			apiUrl = "http://api.openweathermap.org/data/2.5/forecast";
+		}
+		jQuery.ajax({
+			method:"get"
+			, url:apiUrl
+			, data:{APPID:"bc3eddcd4507e4f3892c94de0192536d", q:data.result.parameters.geocity, mode:"json"}
+			, async:false
+		}).done(function(result){
+			googleResult = result;
+		});
+		return googleResult;
+	}
 
 }
 
