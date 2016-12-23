@@ -95,7 +95,7 @@
 
         if (navigator.getUserMedia) {
             navigator.getUserMedia({audio: true}, _startUserMedia.bind(null, _this.onInit), function (e) {
-                //_this.onError(ERR_CLIENT, "No live audio input in this browser: " + JSON.stringify(e));
+                _this.onError(ERR_CLIENT, "No live audio input in this browser: " + JSON.stringify(e));
             });
         } else {
             _this.onError(ERR_CLIENT, "No user media support");
