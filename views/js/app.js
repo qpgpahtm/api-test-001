@@ -226,9 +226,11 @@ function App() {
 
 	function _googleApiAjax(data){
 		var googleResult;
-		var apiUrl = "http://api.openweathermap.org/data/2.5/weather";
+		var sslUrl = "http://";
+		if(location.href.indexOf("https://")>-1) sslUrl = "https://"
+		var apiUrl = sslUrl+"api.openweathermap.org/data/2.5/weather";
 		if(undefined != data.result.parameters.timeperiod){
-			apiUrl = "http://api.openweathermap.org/data/2.5/forecast";
+			apiUrl = sslUrl+"api.openweathermap.org/data/2.5/forecast";
 		}
 		jQuery.ajax({
 			method:"get"
