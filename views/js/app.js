@@ -157,13 +157,26 @@ function App() {
 					data.result.fulfillment.speech = data.result.fulfillment.speech.replace("$weather",googleResult.weather[0].description);
 				}
 				if(undefined != googleResult.list && googleResult.list.length>0){
+					if(undefined==data.result.parameters.timeperiod || ""==data.result.parameters.timeperiod){
+						data.result.parameters.timeperiod = "12:00:00";
+					}
 					var timeSplit = data.result.parameters.timeperiod.split("/");
 					var searchIdx = 0;
 					var arr = new Array();
 					var todayDt = new Date();
+					var validDt = false;
 					var todayStr = todayDt.getFullYear()+"-"+(todayDt.getMonth()+1)+"-"+todayDt.getDate();
+					if(undefined != data.result.parameters.date){
+						todayStr = data.result.parameters.date;
+					}
 					for(var i = 0; i < googleResult.list.length; i++){
 						arr.push(googleResult.list[i].dt_txt);
+						if(todayStr == googleResult.list[i].dt_txt.substr(0,10)){
+							validDt = true;
+						}
+					}
+					if(!validDt){
+						todayStr = todayDt.getFullYear()+"-"+(todayDt.getMonth()+1)+"-"+todayDt.getDate();
 					}
 					if(timeSplit.length>1){
 						for(var j = 0; j < arr.length; j++){
@@ -176,8 +189,25 @@ function App() {
 						if(undefined != googleResult.list[searchIdx].weather && googleResult.list[searchIdx].weather.length > 0){
 							data.result.fulfillment.speech = data.result.fulfillment.speech.replace("$weather",googleResult.list[searchIdx].weather[0].description);
 						}
+					}else if(timeSplit.length>0 && timeSplit.length<2){
+						for(var j = 0; j < arr.length; j++){
+							if(todayStr == arr[j].substr(0,10)){
+								if( Number(timeSplit[0].substr(0,2)) - Number(arr[j].substr(11,2)) >= 0){
+									searchIdx = j;
+								}
+							}
+						}
+						if(undefined != googleResult.list[searchIdx].weather && googleResult.list[searchIdx].weather.length > 0){
+							data.result.fulfillment.speech = data.result.fulfillment.speech.replace("$weather",googleResult.list[searchIdx].weather[0].description);
+						}
 					}
 				}
+			}
+			if(data.result.parameters.date != todayStr){
+				var startDt = new Date();
+				var endDt = new Date();
+				startDt.setFullYear(googleResult.list[0].dt_txt.substr(0,4))
+				data.result.fulfillment.speech = "I can't find the weather data, "+data.result.parameters.date+".";
 			}
             speech = (data.result.fulfillment) ? data.result.fulfillment.speech : data.result.speech;
             // Use Text To Speech service to play text.
@@ -229,7 +259,7 @@ function App() {
 		var sslUrl = "http://";
 		if(location.href.indexOf("https://")>-1) sslUrl = "https://"
 		var apiUrl = sslUrl+"api.openweathermap.org/data/2.5/weather";
-		if(undefined != data.result.parameters.timeperiod){
+		if((undefined != data.result.parameters.timeperiod) || (undefined != data.result.parameters.date)){
 			apiUrl = sslUrl+"api.openweathermap.org/data/2.5/forecast";
 		}
 		jQuery.ajax({
