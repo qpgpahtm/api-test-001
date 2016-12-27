@@ -188,6 +188,7 @@ function App() {
 						}
 						if(undefined != googleResult.list[searchIdx].weather && googleResult.list[searchIdx].weather.length > 0){
 							data.result.fulfillment.speech = data.result.fulfillment.speech.replace("$weather",googleResult.list[searchIdx].weather[0].description);
+							data.result.fulfillment.speech = data.result.fulfillment.speech +" Cloudness "+googleResult.list[searchIdx].clouds.all+"percent. "+googleResult.list[searchIdx].main.temp+"degrees Celsius. Wind "+googleResult.list[searchIdx].wind.speed+"meter per second.";
 						}
 					}else if(timeSplit.length>0 && timeSplit.length<2){
 						for(var j = 0; j < arr.length; j++){
@@ -199,14 +200,12 @@ function App() {
 						}
 						if(undefined != googleResult.list[searchIdx].weather && googleResult.list[searchIdx].weather.length > 0){
 							data.result.fulfillment.speech = data.result.fulfillment.speech.replace("$weather",googleResult.list[searchIdx].weather[0].description);
+							data.result.fulfillment.speech = data.result.fulfillment.speech +" Cloudness "+googleResult.list[searchIdx].clouds.all+"percent. "+googleResult.list[searchIdx].main.temp+"degrees Celsius. Wind "+googleResult.list[searchIdx].wind.speed+"meter per second.";
 						}
 					}
 				}
 			}
-			if(data.result.parameters.date != todayStr){
-				var startDt = new Date();
-				var endDt = new Date();
-				startDt.setFullYear(googleResult.list[0].dt_txt.substr(0,4))
+			if(undefined != data.result.parameters.date && data.result.parameters.date != todayStr){
 				data.result.fulfillment.speech = "I can't find the weather data, "+data.result.parameters.date+".";
 			}
             speech = (data.result.fulfillment) ? data.result.fulfillment.speech : data.result.speech;
@@ -265,7 +264,7 @@ function App() {
 		jQuery.ajax({
 			method:"get"
 			, url:apiUrl
-			, data:{APPID:"bc3eddcd4507e4f3892c94de0192536d", q:data.result.parameters.geocity, mode:"json"}
+			, data:{APPID:"bc3eddcd4507e4f3892c94de0192536d", q:data.result.parameters.geocity, units:"metric", mode:"json"}
 			, async:false
 		}).done(function(result){
 			googleResult = result;
