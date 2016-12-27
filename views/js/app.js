@@ -28,6 +28,7 @@ function App() {
     var apiAi, apiAiTts;
     var isListening = false;
     var sessionId = ApiAi.generateRandomId();
+	var weatherCondition;
 
     this.start = function () {
         start.className += ' hidden';
@@ -155,6 +156,7 @@ function App() {
 				googleResult = _googleApiAjax(data);
 				if(undefined != googleResult.weather && googleResult.weather.length>0){
 					data.result.fulfillment.speech = data.result.fulfillment.speech.replace("$weather",googleResult.weather[0].description);
+					weatherCondition = googleResult;
 				}
 				if(undefined != googleResult.list && googleResult.list.length>0){
 					if(undefined==data.result.parameters.timeperiod || ""==data.result.parameters.timeperiod){
@@ -203,6 +205,7 @@ function App() {
 							data.result.fulfillment.speech = data.result.fulfillment.speech +" Cloudness "+googleResult.list[searchIdx].clouds.all+"percent. "+googleResult.list[searchIdx].main.temp+"degrees Celsius. Wind "+googleResult.list[searchIdx].wind.speed+"meter per second.";
 						}
 					}
+					weatherCondition = googleResult.list[searchIdx];
 				}
 			}
 			if(undefined != data.result.parameters.date && data.result.parameters.date != todayStr){
