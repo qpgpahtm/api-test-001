@@ -179,6 +179,7 @@ function App() {
 					}
 					if(!validDt){
 						todayStr = todayDt.getFullYear()+"-"+(todayDt.getMonth()+1)+"-"+todayDt.getDate();
+						data.result.parameters.date = todayStr;
 					}
 					if(timeSplit.length>1){
 						for(var j = 0; j < arr.length; j++){
